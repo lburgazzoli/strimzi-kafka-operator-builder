@@ -18,11 +18,6 @@ on:
         required: true
       quay-org:
         required: true
-    outputs:
-      image:
-        value: ${{ jobs.build-camel-k.outputs.image }}
-      cli:
-        value: ${{ jobs.build-camel-k.outputs.cli }}
 
 env:
   LANG: en_US.UTF-8
@@ -34,10 +29,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-camel-k:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Camel K
+      - name: Checkout ${{ inputs.repo }}
         uses: actions/checkout@v2
         with:
           repository: ${{ inputs.repo }}
