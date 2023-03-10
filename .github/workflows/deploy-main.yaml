@@ -1,4 +1,4 @@
-name: Build and Deploy Camel K Dev images (main)
+name: Build and Deploy Strimzi images (change-api-group)
 
 on:
   #schedule:
