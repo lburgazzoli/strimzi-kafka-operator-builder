@@ -9,12 +9,14 @@ on:
       branch:
         required: true
         type: string
-    secrets:
-      github-token:
-        required: true
       continer-registry:
+        type: string
         required: true
       continer-registry-organization:
+        type: string
+        required: true
+    secrets:
+      github-token:
         required: true
       continer-registry-username:
         required: true
@@ -83,14 +85,14 @@ jobs:
       - name: 'Login to Quay.io'
         uses: docker/login-action@v2
         with:
-          registry: ${{ secrets.continer-registry }}
+          registry: ${{ inputs.continer-registry }}
           username: ${{ secrets.continer-registry-username }}
           password: ${{ secrets.continer-registry-password }}
 
       - name: 'Build Strimzi'
         env:
-          DOCKER_ORG: ${{ secrets.continer-registry-organization }}
-          DOCKER_REGISTRY:  ${{ secrets.continer-registry }}
+          DOCKER_ORG: ${{ inputs.continer-registry-organization }}
+          DOCKER_REGISTRY:  ${{ inputs.continer-registry }}
         run: |
           export TEST_CLUSTER=kubernetes
           export MVN_ARGS='-V -ntp -Dhttp.keepAlive=false -e -Dsurefire.includes="io.strimzi.operator.cluster.KafkaConnect*Test.java"'
@@ -103,8 +105,8 @@ jobs:
 
       - name: 'Patch Strimzi Images'
         env:
-          DOCKER_ORG: ${{ secrets.continer-registry-organization }}
-          DOCKER_REGISTRY:  ${{ secrets.continer-registry }}
+          DOCKER_ORG: ${{ inputs.continer-registry-organization }}
+          DOCKER_REGISTRY:  ${{ inputs.continer-registry }}
         run: |
           sed -Ei -e "s#(image|value): quay.io/strimzi/([a-z0-9-]+):latest#\1: $DOCKER_REGISTRY/$DOCKER_ORG/\2:latest#" \
             -e "s#(image|value): quay.io/strimzi/([a-zA-Z0-9-]+:[0-9.]+)#\1: $DOCKER_REGISTRY/$DOCKER_ORG/\2#" \

@@ -16,9 +16,9 @@ jobs:
     with:
       repo: lburgazzoli/strimzi-kafka-operator
       branch: change-api-group
-    secrets:
       continer-registry: ${{ env.CONTAINER_REGISTRY }}
       continer-registry-organization: ${{ env.CONTAINER_REGISTRY_ORGANIZATION }}
+    secrets:
       continer-registry-username: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
       continer-registry-password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
       github-token: "${{ secrets.GITHUB_TOKEN }}"
