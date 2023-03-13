@@ -1,8 +1,9 @@
 name: Build and Deploy Strimzi images (change-api-group)
 
-on:
-  #schedule:
-  #  - cron: "0 20 * * *"
+on: p
+  ush:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
