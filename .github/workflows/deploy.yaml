@@ -105,7 +105,7 @@ jobs:
 
       - name: 'Patch Strimzi Images'
         env:
-          CONTAINER_IMAGE:  "${{ inputs.continer-registry }}/${{ inputs.continer-registry-organization }}/operatir:latest"
+          CONTAINER_IMAGE:  "${{ inputs.continer-registry }}/${{ inputs.continer-registry-organization }}/operator:latest"
         run: |
           yq -i '.spec.template.spec.containers[0].image = strenv(CONTAINER_IMAGE)' \
             packaging/install/cluster-operator/060-Deployment-strimzi-cluster-operator.yaml
