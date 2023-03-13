@@ -110,8 +110,12 @@ jobs:
           yq -i '.spec.template.spec.containers[0].image = strenv(CONTAINER_IMAGE)' \
             packaging/install/cluster-operator/060-Deployment-strimzi-cluster-operator.yaml
 
-      - name: Add Strimzi Release
-        env:
-          GH_TOKEN: ${{ secrets.github-token }}
-        run: |
-          gh release create latest --latest --prerelease -t "${{ inputs.branch }}" ./packaging/install/cluster-operator/*.yaml
+      - name: 'Create Strimzi Release'
+        uses: "marvinpinto/action-automatic-releases@latest" 
+        with: 
+          repo_token: "${{ secrets.github-token }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "${{ inputs.branch }}"
+          files: |
+            packaging/install/cluster-operator/*.yaml
