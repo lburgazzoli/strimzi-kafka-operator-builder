@@ -82,21 +82,36 @@ jobs:
               fi
           done
 
+      - name: Login to Quay.io
+        uses: docker/login-action@v1
+        with:
+          registry: quay.io
+          username: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
+
       - name: Build
+        env:
+          DOCKER_ORG: lburgazzoli/strimzi-kafka-operator
+          DOCKER_REGISTRY: quay.io
         run: |
           export TEST_CLUSTER=minikube
           export MVN_ARGS='-Dsurefire.excludes="io.strimzi.api.kafka.model.*Test.java"'
 
           make all
 
-      # - name: Login to Quay.io
-      #   uses: docker/login-action@v1
-      #   with:
-      #     registry: quay.io
-      #     username: ${{ secrets.quay-username }}
-      #     password: ${{ secrets.quay-token }}
+      - name: Path images
+        env:
+          DOCKER_ORG: lburgazzoli/strimzi-kafka-operator
+          DOCKER_REGISTRY: quay.io
+        run: |
+          sed -Ei -e "s#(image|value): quay.io/strimzi/([a-z0-9-]+):latest#\1: $DOCKER_REGISTRY/$DOCKER_ORG/\2:latest#" \
+            -e "s#(image|value): quay.io/strimzi/([a-zA-Z0-9-]+:[0-9.]+)#\1: $DOCKER_REGISTRY/$DOCKER_ORG/\2#" \
+            -e "s#([0-9.]+)=quay.io/strimzi/([a-zA-Z0-9-]+:[a-zA-Z0-9.-]+-kafka-[0-9.]+)#\1=$DOCKER_REGISTRY/$DOCKER_ORG/\2#" \
+            packaging/install/cluster-operator/060-Deployment-strimzi-cluster-operator.yaml
 
       # - name: Global Env
+      #  lburgazzoli/strimzi-kafka-operator
+      #  quay.io
       #   env:
       #     QUAY_REPO: ${{ secrets.quay-repo }}
       #     QUAY_USER: ${{ secrets.quay-org }}
