@@ -83,7 +83,7 @@ jobs:
 
       - name: Build
         env:
-          DOCKER_ORG: lburgazzoli/strimzi-kafka-operator
+          DOCKER_ORG: cos_strimzi
           DOCKER_REGISTRY: quay.io
         run: |
           export TEST_CLUSTER=kubernetes
