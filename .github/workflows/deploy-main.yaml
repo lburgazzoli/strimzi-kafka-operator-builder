@@ -21,4 +21,4 @@ jobs:
     secrets:
       continer-registry-username: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
       continer-registry-password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
-      github-token: "${{ secrets.GITHUB_TOKEN }}"
+      github-token: "${{ secrets.GH_TOKEN }}"
