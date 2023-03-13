@@ -95,10 +95,10 @@ jobs:
           DOCKER_REGISTRY:  ${{ inputs.continer-registry }}
         run: |
           export TEST_CLUSTER=kubernetes
-          export MVN_ARGS='-V -ntp -Dhttp.keepAlive=false -e -Dsurefire.includes="io.strimzi.operator.cluster.KafkaConnect*Test.java"'
+          #export MVN_ARGS='-V -ntp -Dhttp.keepAlive=false -e -Dsurefire.includes="io.strimzi.operator.cluster.KafkaConnect*Test.java"'
           
           # temporary skip all tests 
-          #export MVN_ARGS='-ntp -DskipTests'
+          export MVN_ARGS='-V -ntp -Dhttp.keepAlive=false -e -DskipTests'
           
 
           make all
