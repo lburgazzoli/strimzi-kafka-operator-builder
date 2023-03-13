@@ -105,20 +105,13 @@ jobs:
 
       - name: 'Patch Strimzi Images'
         env:
-          DOCKER_ORG: ${{ inputs.continer-registry-organization }}
-          DOCKER_REGISTRY:  ${{ inputs.continer-registry }}
+          CONTAINER_IMAGE:  "${{ inputs.continer-registry }}/${{ inputs.continer-registry-organization }}/operatir:latest"
         run: |
-          sed -Ei -e "s#(image|value): quay.io/strimzi/([a-z0-9-]+):latest#\1: $DOCKER_REGISTRY/$DOCKER_ORG/\2:latest#" \
-            -e "s#(image|value): quay.io/strimzi/([a-zA-Z0-9-]+:[0-9.]+)#\1: $DOCKER_REGISTRY/$DOCKER_ORG/\2#" \
-            -e "s#([0-9.]+)=quay.io/strimzi/([a-zA-Z0-9-]+:[a-zA-Z0-9.-]+-kafka-[0-9.]+)#\1=$DOCKER_REGISTRY/$DOCKER_ORG/\2#" \
+          yq -i '.spec.template.spec.containers[0].image = strenv(CONTAINER_IMAGE)' \
             packaging/install/cluster-operator/060-Deployment-strimzi-cluster-operator.yaml
 
-      - name: Add Camel K Release
-        uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.github-token }}"
-          automatic_release_tag: "latest"
-          prerelease: true
-          title: "${{ inputs.branch }}"
-          files: |
-            packaging/install/cluster-operator/*.yaml
+      - name: Add Strimzi Release
+        env:
+          GH_TOKEN: ${{ secrets.github-token }}
+        run: |
+          gh release create latest --latest --prerelease -t "${{ inputs.branch }}" ./packaging/install/cluster-operator/*.yaml
