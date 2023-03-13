@@ -1,7 +1,7 @@
 name: Build and Deploy Strimzi images (change-api-group)
 
-on: p
-  ush:
+on:
+  push:
     branches:
       - main
   workflow_dispatch:
