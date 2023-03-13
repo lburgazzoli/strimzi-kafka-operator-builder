@@ -94,6 +94,7 @@ jobs:
         run: |
           export TEST_CLUSTER=kubernetes
           export MVN_ARGS='-ntp -Dsurefire.includes="io.strimzi.operator.cluster.KafkaConnect*Test.java"'
+          
           # temporary skip all tests 
           #export MVN_ARGS='-ntp -DskipTests'
           
