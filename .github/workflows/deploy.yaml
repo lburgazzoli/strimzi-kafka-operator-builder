@@ -73,6 +73,10 @@ jobs:
               fi
           done
 
+      - name: 'Show diff'
+        run: |
+          git status
+          git diff
       
       - name: 'SetUp KinD'
         uses: container-tools/kind-action@v2
@@ -109,6 +113,11 @@ jobs:
         run: |
           yq -i '.spec.template.spec.containers[0].image = strenv(CONTAINER_IMAGE)' \
             packaging/install/cluster-operator/060-Deployment-strimzi-cluster-operator.yaml
+
+      - name: 'Show diff'
+        run: |
+          git status
+          git diff
 
       - name: 'Create Strimzi Release'
         uses: "marvinpinto/action-automatic-releases@latest" 
