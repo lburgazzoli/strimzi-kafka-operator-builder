@@ -13,7 +13,5 @@ jobs:
       repo: lburgazzoli/strimzi-kafka-operator
       branch: change-api-group
     secrets:
-      quay-username: ${{ secrets.QUAY_USERNAME }}
-      quay-token: ${{ secrets.QUAY_ROBOT_TOKEN }}
-      quay-repo: ${{ secrets.QUAY_REPO }}
-      quay-org: ${{ secrets.QUAY_ORG }}
+      continer-registry-username: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
+      continer-registry-password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}

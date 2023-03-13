@@ -10,13 +10,9 @@ on:
         required: true
         type: string
     secrets:
-      quay-username:
+      continer-registry-username:
         required: true
-      quay-token:
-        required: true
-      quay-repo:
-        required: true
-      quay-org:
+      continer-registry-password:
         required: true
 
 env:
@@ -86,8 +82,8 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: quay.io
-          username: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
+          username: ${{ secrets.continer-registry-username }}
+          password: ${{ secrets.continer-registry-password }}
 
       - name: Build
         env:
