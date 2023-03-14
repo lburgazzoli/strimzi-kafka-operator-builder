@@ -49,7 +49,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom-*.xml') }}
           restore-keys: ${{ runner.os }}-m2-
 
-      - name: 'Patch API group'
+      - name: 'Patch Resources'
         run: |
           sed -i "s/kafka.strimzi.io/strimzi.rhoc.bf2.dev/g" api/src/main/java/io/strimzi/api/kafka/model/Constants.java
           sed -i "s/core.strimzi.io/core.strimzi.rhoc.bf2.dev/g" api/src/main/java/io/strimzi/api/kafka/model/Constants.java
@@ -102,17 +102,30 @@ jobs:
           #export MVN_ARGS='-V -ntp -Dhttp.keepAlive=false -e -Dsurefire.includes="io.strimzi.operator.cluster.KafkaConnect*Test.java"'
           
           # temporary skip all tests 
-          export MVN_ARGS='-V -ntp -Dhttp.keepAlive=false -e -DskipTests'
-          
+          export MVN_ARGS='-V -ntp -Dhttp.keepAlive=false -e -DskipTests'          
 
           make all
 
-      - name: 'Patch Strimzi Images'
+      - name: 'Patch Resources'
         env:
           CONTAINER_IMAGE:  "${{ inputs.continer-registry }}/${{ inputs.continer-registry-organization }}/operator:latest"
         run: |
+          yq -i '.rules[1].apiGroups[0] = "strimzi.rhoc.bf2.dev"' packaging/install/cluster-operator/023-ClusterRole-strimzi-cluster-operator-role.yaml
+          yq -i '.rules[2].apiGroups[0] = "core.strimzi.rhoc.bf2.dev"' packaging/install/cluster-operator/023-ClusterRole-strimzi-cluster-operator-role.yaml
+          yq -i '.rules[0].apiGroups[0] = "strimzi.rhoc.bf2.dev"' packaging/install/cluster-operator/031-ClusterRole-strimzi-entity-operator.yaml
+
           yq -i '.spec.template.spec.containers[0].image = strenv(CONTAINER_IMAGE)' \
             packaging/install/cluster-operator/060-Deployment-strimzi-cluster-operator.yaml
+
+      - name: 'Build Single Files'
+        env:
+          DOCKER_ORG: ${{ inputs.continer-registry-organization }}
+          DOCKER_REGISTRY:  ${{ inputs.continer-registry }}
+        run: |
+          find packaging/install/cluster-operator/ -type f -exec cat {} \; -exec printf "\n---\n" \; >  packaging/install/cluster-operator/strimzi-cluster-operator-latest.yaml
+          find packaging/install/topic-operator/ -type f -exec cat {} \; -exec printf "\n---\n" \; >  packaging/install/topic-operator/strimzi-topic-operator-latest.yaml
+          find packaging/install/user-operator/ -type f -exec cat {} \; -exec printf "\n---\n" \; >  packaging/install/user-operator/strimzi-user-operator-latest.yaml
+          find packaging/install/cluster-operator/*-Crd-*.yaml -type f -exec cat {} \; -exec printf "\n---\n" \; >  packaging/install/cluster-operator/strimzi-crds-latest.yaml
 
       - name: 'Show diff'
         run: |
